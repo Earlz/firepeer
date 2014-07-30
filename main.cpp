@@ -38,12 +38,12 @@ CBigNum bnProofOfWorkLimit(~uint256(0) >> 20); // "standard" scrypt target limit
 CBigNum bnProofOfStakeLimit(~uint256(0) >> 20);
 CBigNum bnProofOfWorkLimitTestNet(~uint256(0) >> 16);
 
-unsigned int nTargetSpacing = 1 * 60; // 60 seconds
-unsigned int nStakeMinAge = 60 * 60 * 24 * 1; // 24 hour
+unsigned int nTargetSpacing = 1 * 120; // 120 seconds
+unsigned int nStakeMinAge = 60 * 60; // 1 hour
 unsigned int nStakeMaxAge = -1;           //unlimited
 unsigned int nModifierInterval = 10 * 60; // time to elapse before new modifier is computed
 
-int nCoinbaseMaturity = 50;
+int nCoinbaseMaturity = 20; //20 blocks for coins to mature
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
 
@@ -66,7 +66,7 @@ map<uint256, set<uint256> > mapOrphanTransactionsByPrev;
 // Constant stuff for coinbase transactions we create:
 CScript COINBASE_FLAGS;
 
-const string strMessageMagic = "Firecoin Signed Message:\n";
+const string strMessageMagic = "BoomCoin Signed Message:\n";
 
 // Settings
 int64_t nTransactionFee = MIN_TX_FEE;
@@ -964,28 +964,24 @@ uint256 WantedByOrphan(const CBlock* pblockOrphan)
 // miner's coin base reward
 int64_t GetProofOfWorkReward(int64_t nFees)
 {
-    int64_t nSubsidy = 5 * COIN;
-	if(pindexBest->nHeight < 2)
+    int64_t nSubsidy = 100 * COIN;
+	if(pindexBest->nHeight < 1)
     {
-        nSubsidy = 500 * COIN;
+        nSubsidy = 300000 * COIN;
     }
-		else if(pindexBest->nHeight < 200)
+		else if(pindexBest->nHeight < 120)
     {
-		nSubsidy = 2 * COIN;
+		nSubsidy = 1 * COIN;
     }
-		else if(pindexBest->nHeight < 1000)
+		else if(pindexBest->nHeight < 2880)
     {
-		nSubsidy = 17 * COIN;
+		nSubsidy = 4000 * COIN;
     }
-		else if(pindexBest->nHeight < 2500)
-    {
-		nSubsidy = 50 * COIN;
-    }
-		else if(pindexBest->nHeight < 4500)
-    {
-		nSubsidy = 5 * COIN;
-    }
-	
+		else if(pindexBest->nHeight < 3000)
+	{
+		nSubsidy = 0 * COIN;
+	}
+		
     if (fDebug && GetBoolArg("-printcreation"))
         printf("GetProofOfWorkReward() : create=%s nSubsidy=%"PRId64"\n", FormatMoney(nSubsidy).c_str(), nSubsidy);
 	
@@ -2412,7 +2408,7 @@ bool CheckDiskSpace(uint64_t nAdditionalBytes)
         string strMessage = _("Warning: Disk space is low!");
         strMiscWarning = strMessage;
         printf("*** %s\n", strMessage.c_str());
-        uiInterface.ThreadSafeMessageBox(strMessage, "Firecoin", CClientUIInterface::OK | CClientUIInterface::ICON_EXCLAMATION | CClientUIInterface::MODAL);
+        uiInterface.ThreadSafeMessageBox(strMessage, "BoomCoin", CClientUIInterface::OK | CClientUIInterface::ICON_EXCLAMATION | CClientUIInterface::MODAL);
         StartShutdown();
         return false;
     }
@@ -2497,9 +2493,9 @@ bool LoadBlockIndex(bool fAllowNew)
         if (!fAllowNew)
             return false;
 
-        const char* pszTimestamp = "Firecoin The First X15 PoW PoS Hybrid Cryptocurrency";
+        const char* pszTimestamp = "BoomCoin7/29";
         CTransaction txNew;
-        txNew.nTime = 1403927609;
+        txNew.nTime = 1406686512;
         txNew.vin.resize(1);
         txNew.vout.resize(1);
         txNew.vin[0].scriptSig = CScript() << 0 << CBigNum(42) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
@@ -2509,14 +2505,14 @@ bool LoadBlockIndex(bool fAllowNew)
         block.hashPrevBlock = 0;
         block.hashMerkleRoot = block.BuildMerkleTree();
         block.nVersion = 1;
-        block.nTime    = 1403927609;
+        block.nTime    = 1406686512;
         block.nBits    = bnProofOfWorkLimit.GetCompact();
-        block.nNonce   = 1822523;
+        block.nNonce   = 3163711;
 		if(fTestNet)
         {
             block.nNonce   = 0;
         }
-        if (false  && (block.GetHash() != hashGenesisBlock)) {
+        if (false && (block.GetHash() != hashGenesisBlock)) {
 
         // This will figure out a valid hash and Nonce if you're
         // creating a different genesis block:
@@ -2538,7 +2534,7 @@ bool LoadBlockIndex(bool fAllowNew)
         printf("block.nNonce = %u \n", block.nNonce);
 
         //// debug print
-        assert(block.hashMerkleRoot == uint256("0xc1979ae84522f97066791b8c8d15bd048cc0b3c9bf9ae08ba03b3745377fc213"));
+        assert(block.hashMerkleRoot == uint256("0xd9337694b095c83e6e3791820ba3388bdfeedde4fd0e1e7b5aeacd56472fc321"));
         block.print();
         assert(block.GetHash() == (!fTestNet ? hashGenesisBlock : hashGenesisBlockTestNet));
         assert(block.CheckBlock());

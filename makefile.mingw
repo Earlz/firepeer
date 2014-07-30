@@ -91,8 +91,6 @@ OBJS= \
     obj/simd.o \
 	obj/hamsi.o \
 	obj/fugue.o \
-	obj/shabal.o\
-    obj/whirlpool.o \
     obj/alert.o \
     obj/version.o \
     obj/checkpoints.o \
@@ -128,7 +126,7 @@ OBJS= \
     obj/scrypt-x86.o \
     obj/scrypt-x86_64.o 
 
-all: Firecoind.exe
+all: BoomCoind.exe
 
 LIBS += $(CURDIR)/leveldb/libleveldb.a $(CURDIR)/leveldb/libmemenv.a
 DEFS += $(addprefix -I,$(CURDIR)/leveldb/include)
@@ -165,11 +163,11 @@ obj/%.o: %.cpp
 	      -e '/^$$/ d' -e 's/$$/ :/' < $(@:%.o=%.d) >> $(@:%.o=%.P); \
 	  rm -f $(@:%.o=%.d)
 
-Firecoind.exe: $(OBJS:obj/%=obj/%)
+BoomCoind.exe: $(OBJS:obj/%=obj/%)
 	g++ $(CFLAGS) $(LDFLAGS) -o $@ $(LIBPATHS) $^ $(LIBS)
 
 clean:
-	-del /Q Firecoind
+	-del /Q BoomCoind
 	-del /Q obj\*
 
 FORCE:

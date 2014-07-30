@@ -15,8 +15,6 @@
 #include "sph_echo.h"
 #include "sph_hamsi.h"
 #include "sph_fugue.h"
-#include "sph_shabal.h"
-#include "sph_whirlpool.h"
 
 #ifndef QT_NO_DEBUG
 #include <string>
@@ -39,10 +37,8 @@ GLOBAL sph_cubehash512_context  z_cubehash;
 GLOBAL sph_shavite512_context   z_shavite;
 GLOBAL sph_simd512_context      z_simd;
 GLOBAL sph_echo512_context      z_echo;
-GLOBAL sph_hamsi512_context      z_hamsi;
-GLOBAL sph_fugue512_context      z_fugue;
-GLOBAL sph_shabal512_context     z_shabal;
-GLOBAL sph_whirlpool_context     z_whirlpool;
+GLOBAL sph_hamsi512_context     z_hamsi;
+GLOBAL sph_fugue512_context     z_fugue;
 
 #define fillz() do { \
     sph_blake512_init(&z_blake); \
@@ -58,8 +54,6 @@ GLOBAL sph_whirlpool_context     z_whirlpool;
     sph_echo512_init(&z_echo); \
     sph_hamsi512_init(&z_hamsi); \
     sph_fugue512_init(&z_fugue); \
-    sph_shabal512_init(&z_shabal); \
-    sph_whirlpool_init(&z_whirlpool); \
 } while (0) 
 
 
@@ -71,29 +65,25 @@ GLOBAL sph_whirlpool_context     z_whirlpool;
 #define ZSKEIN (memcpy(&ctx_skein, &z_skein, sizeof(z_skein)))
 #define ZHAMSI (memcpy(&ctx_hamsi, &z_hamsi, sizeof(z_hamsi)))
 #define ZFUGUE (memcpy(&ctx_fugue, &z_fugue, sizeof(z_fugue)))
-#define ZSHABAL (memcpy(&ctx_shabal, &z_shabal, sizeof(z_shabal)))
-#define ZWHIRLPOOL (memcpy(&ctx_whirlpool, &z_whirlpool, sizeof(z_whirlpool)))
 
 template<typename T1>
 inline uint256 Hash9(const T1 pbegin, const T1 pend)
 
 {
-    sph_blake512_context     ctx_blake;
-    sph_bmw512_context       ctx_bmw;
-    sph_groestl512_context   ctx_groestl;
-    sph_jh512_context        ctx_jh;
-    sph_keccak512_context    ctx_keccak;
-    sph_skein512_context     ctx_skein;
-    sph_luffa512_context     ctx_luffa;
-    sph_cubehash512_context  ctx_cubehash;
-    sph_shavite512_context   ctx_shavite;
-    sph_simd512_context      ctx_simd;
-    sph_echo512_context      ctx_echo;
+    sph_blake512_context      ctx_blake;
+    sph_bmw512_context        ctx_bmw;
+    sph_groestl512_context    ctx_groestl;
+    sph_jh512_context         ctx_jh;
+    sph_keccak512_context     ctx_keccak;
+    sph_skein512_context      ctx_skein;
+    sph_luffa512_context      ctx_luffa;
+    sph_cubehash512_context   ctx_cubehash;
+    sph_shavite512_context    ctx_shavite;
+    sph_simd512_context       ctx_simd;
+    sph_echo512_context       ctx_echo;
     sph_hamsi512_context      ctx_hamsi;
     sph_fugue512_context      ctx_fugue;
-    sph_shabal512_context     ctx_shabal;
-    sph_whirlpool_context     ctx_whirlpool;
-    static unsigned char pblank[1];
+static unsigned char pblank[1];
 
 #ifndef QT_NO_DEBUG
     //std::string strhash;
@@ -154,20 +144,8 @@ inline uint256 Hash9(const T1 pbegin, const T1 pend)
     sph_fugue512 (&ctx_fugue, static_cast<const void*>(&hash[11]), 64);
     sph_fugue512_close(&ctx_fugue, static_cast<void*>(&hash[12]));
 
-    sph_shabal512_init(&ctx_shabal);
-    sph_shabal512 (&ctx_shabal, static_cast<const void*>(&hash[12]), 64);
-    sph_shabal512_close(&ctx_shabal, static_cast<void*>(&hash[13]));
 
-    sph_whirlpool_init(&ctx_whirlpool);
-    sph_whirlpool (&ctx_whirlpool, static_cast<const void*>(&hash[13]), 64);
-    sph_whirlpool_close(&ctx_whirlpool, static_cast<void*>(&hash[14]));
-
-    return hash[14].trim256();
+    return hash[12].trim256();
 }
-
-
-
-
-
 
 #endif // HASHBLOCK_H
